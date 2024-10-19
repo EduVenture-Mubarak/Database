@@ -1,3 +1,4 @@
+USE EduVenture;
 DELIMITER //
 
 CREATE TRIGGER update_enrollment_score

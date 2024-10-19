@@ -1,3 +1,4 @@
+ْUSE EduVenture;
 DROP VIEW IF EXISTS CourseContentView;
 CREATE VIEW CourseContentView AS
 SELECT 
