@@ -10,40 +10,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: CD to repo and pull updates
-      run: |
-        ssh -o StrictHostKeyChecking=no -i ${{ secrets.DEV_SSH_KEY }} -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "cd ${{ secrets.REPO_PATH }} && git pull"
+      - name: Create SSH key file
+        run: |
+          echo "${{ secrets.DEV_SSH_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
 
-    - name: Remove edited files from log
-      run: |
-        ssh -o StrictHostKeyChecking=no -i ${{ secrets.DEV_SSH_KEY }} -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
-          repo_path=${{ secrets.REPO_PATH }}
-          log_file=${{ secrets.LOG_FILE_PATH }}
-          for file in $repo_path/*.sql; do
-            if git diff --name-only HEAD^..HEAD | grep -q \"$file\"; then
-              sed -i \"/$file/d\" $log_file
-            fi
-          done
-        "
+      - name: CD to repo and pull updates
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key.pem -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "cd ${{ secrets.REPO_PATH }} && git pull"
 
-    - name: Execute SQL files
-      run: |
-        ssh -o StrictHostKeyChecking=no -i ${{ secrets.DEV_SSH_KEY }} -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
-          repo_path=${{ secrets.REPO_PATH }}
-          log_file=${{ secrets.LOG_FILE_PATH }}
-          error_log=${{ secrets.ERROR_LOG_FILE_PATH }}
-          for file in $repo_path/*.sql; do
-            if ! grep -Fxq \"$file\" $log_file; then
-              echo Processing $file...
-              mysql -h ${{ secrets.RDS_INSTANCE }} -P ${{ secrets.MYSQL_PORT }} -u ${{ secrets.MYSQL_USER }} -p'${{ secrets.MYSQL_PASSWORD }}' < $file
-              if [ $? -eq 0 ]; then
-                echo $file >> $log_file
-              else
-                echo $file >> $error_log
+      - name: Remove edited files from log
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key.pem -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
+            repo_path=${{ secrets.REPO_PATH }}
+            log_file=${{ secrets.LOG_FILE_PATH }}
+            for file in $repo_path/*.sql; do
+              if git diff --name-only HEAD^..HEAD | grep -q \"$file\"; then
+                sed -i \"/$file/d\" $log_file
               fi
-            fi
-          done
-        "
+            done
+          "
+      - name: Execute SQL script on server
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key.pem -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "cd ${{ secrets.REPO_PATH }} && ./${{ secrets.SCRIPT_FILE }}"
+      
