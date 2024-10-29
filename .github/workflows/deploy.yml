@@ -19,7 +19,7 @@ jobs:
 
     - name: Remove edited files from log
       run: |
-        ssh -o StrictHostKeyChecking=no -i ${{ secrets.DEV_SSH_KEY }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
+        ssh -o StrictHostKeyChecking=no -i ${{ secrets.DEV_SSH_KEY }} -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
           repo_path=${{ secrets.REPO_PATH }}
           log_file=${{ secrets.LOG_FILE_PATH }}
           for file in $repo_path/*.sql; do
@@ -31,7 +31,7 @@ jobs:
 
     - name: Execute SQL files
       run: |
-        ssh -o StrictHostKeyChecking=no -i ${{ secrets.DEV_SSH_KEY }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
+        ssh -o StrictHostKeyChecking=no -i ${{ secrets.DEV_SSH_KEY }} -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
           repo_path=${{ secrets.REPO_PATH }}
           log_file=${{ secrets.LOG_FILE_PATH }}
           error_log=${{ secrets.ERROR_LOG_FILE_PATH }}
