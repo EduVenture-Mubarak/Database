@@ -109,6 +109,7 @@ CREATE TABLE IF NOT EXISTS Achievement (
     ID INT AUTO_INCREMENT PRIMARY KEY,
     AchievementName VARCHAR(255),
     AchievementDescription TEXT,
+    Degree INT,
     Criteria TEXT
 );
 CREATE TABLE IF NOT EXISTS StudentAchievement (

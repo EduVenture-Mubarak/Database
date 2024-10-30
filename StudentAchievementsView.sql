@@ -3,6 +3,7 @@ CREATE OR REPLACE VIEW StudentAchievementsView AS
 SELECT 
     a.ID AS AchievementID,
     a.AchievementName AS AchievementName,
+    a.Degree AS Degree,
     sa.DateAcquired AS CompletedOn,
     sa.StudentID
 FROM StudentAchievement sa
