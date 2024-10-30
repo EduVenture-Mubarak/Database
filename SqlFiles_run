@@ -1,0 +1,16 @@
+#!/bin/bash
+
+log_file="./log_filenames"
+error_log="./err_log_filenames"
+
+for file in *.sql; do
+  if ! grep -Fxq "$file" "$log_file"; then
+    echo "Processing $file..."
+    
+    if [ $? -eq 0 ]; then
+      echo $file >> $log_file
+    else
+      echo $file >> $error_log
+    fi
+  fi
+done

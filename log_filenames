@@ -1,0 +1,12 @@
+CourseContentStatus.sql
+CourseContentView.sql
+CourseInfoView.sql
+CreateTables.sql
+PushTokenTable.sql
+QuizDetailsView.sql
+Student.sql
+StudentAchievementsView.sql
+StudentEnrolledCoursesView.sql
+update_enrollment_score_on_insert.sql
+update_enrollment_score_on_update.sql
+ConstrainsAndIndexes.sql
